@@ -2,47 +2,43 @@
 const mongoose = require('mongoose');
 const {
   menTips,
-  femaleTips
+  femaleTips,
 } = require('../dist/tips');
 
 const {
-  Schema
+  Schema,
 } = mongoose;
 const WeightSchema = new Schema({
   User: String,
   Weight: Number,
   Date: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   Gender: {
     type: String,
-    default: 0
+    default: 0,
   },
   Height: {
     type: Number,
-    default: 0
+    default: 0,
   },
   Age: {
     type: Number,
-    default: 0
+    default: 0,
   },
   BMI: {
     type: Number,
-    default: 0
+    default: 0,
   },
   BMR: {
     type: Number,
-    default: 0
+    default: 0,
   },
   IdealWeight: {
     type: Number,
-    default: 0
+    default: 0,
   },
-  Tips: {
-    type: String,
-    default: ''
-  }
 });
 WeightSchema.methods.getBMI = () => {
   const BMI = this.Weight / ((this.Height / 100) ** 2);
@@ -74,15 +70,6 @@ WeightSchema.methods.getIdealWeight = () => {
   }
   this.IdealWeight = IdealWeight;
 };
-WeightSchema.methods.getTips = () => {
-  if (this.Gender === 'M') {
-    this.Tips = menTips;
-  }
-  if (this.Gender === 'F') {
-    this.Tips = femaleTips;
-  }
-  return menTips;
-};
 WeightSchema.methods.toUserJSON = () => {
   const UserJSON = {
     user: this.User,
@@ -94,7 +81,6 @@ WeightSchema.methods.toUserJSON = () => {
     BMI: this.BMI,
     BMR: this.BMR,
     idealWeight: this.IdealWeight,
-    tips: this.Tips
   };
   return UserJSON;
 };
