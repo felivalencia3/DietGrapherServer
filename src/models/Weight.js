@@ -1,9 +1,5 @@
 /* eslint-disable no-plusplus */
 const mongoose = require('mongoose');
-const {
-  menTips,
-  femaleTips,
-} = require('../dist/tips');
 
 const {
   Schema,
