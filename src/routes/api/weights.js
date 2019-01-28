@@ -2,10 +2,6 @@
 const mongoose = require('mongoose');
 const router = require('express').Router();
 const auth = require('../auth');
-const {
-  menTips,
-  femaleTips
-} = require('../../dist/tips');
 
 const Weight = mongoose.model('Weights');
 router.get('/hello', auth.required, (req, res) => {
@@ -15,8 +11,8 @@ router.get('/hello', auth.required, (req, res) => {
 router.post('/newuser', auth.required, (req, res) => {
   const {
     body: {
-      entry
-    }
+      entry,
+    },
   } = req;
   entry.age = parseInt(entry.age, 10);
   entry.weight = parseInt(entry.weight, 10);
@@ -25,7 +21,7 @@ router.post('/newuser', auth.required, (req, res) => {
     return res.sendStatus(422).json({
       error: {
         weight: 'is required',
-      }
+      },
     });
   }
   if (!entry.user) {
@@ -51,15 +47,6 @@ router.post('/newuser', auth.required, (req, res) => {
       BestWeight += 1.7;
     }
   }
-  let curatedTips;
-  if (entry.gender === 'M') {
-    curatedTips = menTips;
-  }
-  if (entry.gender === 'F') {
-    curatedTips = femaleTips;
-  } else {
-    curatedTips = menTips;
-  }
   const bodyMassIndex = entry.weight / ((entry.height / 100) ** 2);
   const toBeUser = {
     User: entry.user,
@@ -70,7 +57,6 @@ router.post('/newuser', auth.required, (req, res) => {
     BMI: Math.ceil(bodyMassIndex),
     BMR: Math.ceil(BasalMetaRate),
     IdealWeight: Math.ceil(BestWeight),
-    Tips: curatedTips
   };
 
   const FirstEntry = new Weight(toBeUser);
@@ -83,14 +69,14 @@ router.post('/newuser', auth.required, (req, res) => {
 router.post('/new', auth.required, (req, res) => {
   const {
     body: {
-      entry
-    }
+      entry,
+    },
   } = req;
   if (!entry.weight) {
     return res.sendStatus(422).json({
       error: {
         weight: 'is required',
-      }
+      },
     });
   }
   if (!entry.user) {
@@ -98,7 +84,7 @@ router.post('/new', auth.required, (req, res) => {
   }
   const toBeUser = {
     User: entry.user,
-    Weight: entry.weight
+    Weight: entry.weight,
   };
   const Entry = new Weight(toBeUser);
   return Entry.save()
@@ -107,27 +93,27 @@ router.post('/new', auth.required, (req, res) => {
         console.error(err);
       }
       res.status(200).json({
-        weight: entry.weight
+        weight: entry.weight,
       });
     });
 });
 router.get('/data', auth.required, (req, res) => {
   const {
     body: {
-      user
-    }
+      user,
+    },
   } = req;
   if (!user) {
     res.json({
-      errror: 'no user'
+      errror: 'no user',
     });
   }
   Weight.findOne({
-    User: user
+    User: user,
   }, {}, {
     sort: {
-      created_at: 1
-    }
+      created_at: 1,
+    },
   }, (err, data) => {
     res.send(data);
   });
@@ -135,17 +121,17 @@ router.get('/data', auth.required, (req, res) => {
 router.get('/', auth.required, (req, res) => {
   const {
     body: {
-      user
-    }
+      user,
+    },
   } = req;
   if (!user) {
-    res.json(
-      {
-        error: 'no user'
-      }
-    );
+    res.json({
+      error: 'no user',
+    });
   }
-  Weight.find({ User: user }, (err, entry) => {
+  Weight.find({
+    User: user,
+  }, (err, entry) => {
     res.send(entry);
   });
 });

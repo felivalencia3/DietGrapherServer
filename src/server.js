@@ -19,25 +19,25 @@ app.use(
   session({
     secret: 'passport-tutorial',
     cookie: {
-      maxAge: 60000
+      maxAge: 60000,
     },
     resave: false,
-    saveUninitialized: false
-  })
+    saveUninitialized: false,
+  }),
 );
 app.use(
   bodyParser.urlencoded({
-    extended: false
-  })
+    extended: false,
+  }),
 );
 app.get('/api/getUsername', (req, res) => res.send({
-  username: os.userInfo().username
+  username: os.userInfo().username,
 }));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static(`${__dirname}/dist`));
 mongoose.connect('mongodb://localhost/auth', {
-  useNewUrlParser: true
+  useNewUrlParser: true,
 });
 if (process.env.NODE_ENV === 'development') {
   app.use(errorHandler());
