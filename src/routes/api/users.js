@@ -9,8 +9,8 @@ const Users = mongoose.model('Users');
 router.post('/', auth.optional, (req, res) => {
   const {
     body: {
-      user
-    }
+      user,
+    },
   } = req;
 
   if (!user.email) {
@@ -35,7 +35,7 @@ router.post('/', auth.optional, (req, res) => {
 
   return finalUser.save()
     .then(() => res.json({
-      user: finalUser.toAuthJSON()
+      user: finalUser.toAuthJSON(),
     }));
 });
 
@@ -43,8 +43,8 @@ router.post('/', auth.optional, (req, res) => {
 router.post('/login', auth.optional, (req, res, next) => {
   const {
     body: {
-      user
-    }
+      user,
+    },
   } = req;
 
   if (!user.email) {
@@ -64,7 +64,7 @@ router.post('/login', auth.optional, (req, res, next) => {
   }
 
   return passport.authenticate('local', {
-    session: false
+    session: false,
   }, (err, passportUser) => {
     if (err) {
       return next(err);
@@ -75,7 +75,7 @@ router.post('/login', auth.optional, (req, res, next) => {
       nextuser.token = passportUser.generateJWT();
 
       return res.json({
-        user: nextuser.toAuthJSON()
+        user: nextuser.toAuthJSON(),
       });
     }
 
@@ -87,8 +87,8 @@ router.post('/login', auth.optional, (req, res, next) => {
 router.get('/current', auth.required, (req, res) => {
   const {
     payload: {
-      id
-    }
+      id,
+    },
   } = req;
 
   return Users.findById(id)
@@ -98,7 +98,7 @@ router.get('/current', auth.required, (req, res) => {
       }
 
       return res.json({
-        user: user.toAuthJSON()
+        user: user.toAuthJSON(),
       });
     });
 });

@@ -15,6 +15,7 @@ process.env.NODE_ENV = 'development';
 app.use(helmet());
 app.use(compression());
 app.use(morgan('dev'));
+
 app.use(
   session({
     secret: 'passport-tutorial',
@@ -30,6 +31,7 @@ app.use(
     extended: false,
   }),
 );
+app.use(express.static('public'));
 app.get('/api/getUsername', (req, res) => res.send({
   username: os.userInfo().username,
 }));
