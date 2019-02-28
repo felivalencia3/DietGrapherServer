@@ -14,19 +14,11 @@ router.post('/', auth.optional, (req, res) => {
   } = req;
 
   if (!user.email) {
-    return res.status(422).json({
-      errors: {
-        email: 'is required',
-      },
-    });
+    return res.status(422).send('Email is Required');
   }
 
   if (!user.password) {
-    return res.status(422).json({
-      errors: {
-        password: 'is required',
-      },
-    });
+    return res.status(422).send('Password is Required');
   }
 
   const finalUser = new Users(user);
@@ -34,7 +26,7 @@ router.post('/', auth.optional, (req, res) => {
   finalUser.setPassword(user.password);
 
   return finalUser.save()
-    .then(() => res.json({
+    .then(() => res.send({
       user: finalUser.toAuthJSON(),
     }));
 });
@@ -48,19 +40,11 @@ router.post('/login', auth.optional, (req, res, next) => {
   } = req;
 
   if (!user.email) {
-    return res.status(422).json({
-      errors: {
-        email: 'is required',
-      },
-    });
+    return res.status(422).send('Email is Required');
   }
 
   if (!user.password) {
-    return res.status(422).json({
-      errors: {
-        password: 'is required',
-      },
-    });
+    return res.status(422).send('Password is Required');
   }
 
   return passport.authenticate('local', {
@@ -74,7 +58,7 @@ router.post('/login', auth.optional, (req, res, next) => {
       const nextuser = passportUser;
       nextuser.token = passportUser.generateJWT();
 
-      return res.json({
+      return res.send({
         user: nextuser.toAuthJSON(),
       });
     }
@@ -97,7 +81,7 @@ router.get('/current', auth.required, (req, res) => {
         return res.sendStatus(400);
       }
 
-      return res.json({
+      return res.send({
         user: user.toAuthJSON(),
       });
     });

@@ -1,7 +1,14 @@
+/* eslint-disable radix */
 /* eslint-disable no-plusplus */
 const mongoose = require('mongoose');
 const router = require('express').Router();
 const auth = require('../auth');
+
+const inchesOver5Feet = (cm) => {
+  let inch = cm * 0.39370;
+  inch -= 60;
+  return Math.round(inch);
+};
 
 const Weight = mongoose.model('Weights');
 router.get('/hello', auth.required, (req, res) => {
@@ -17,6 +24,9 @@ router.post('/newuser', auth.required, (req, res) => {
   entry.age = parseInt(entry.age, 10);
   entry.weight = parseInt(entry.weight, 10);
   entry.height = parseInt(entry.height, 10);
+  if (entry.gender === 'O') {
+    entry.gender = 'M';
+  }
   if (!entry.weight) {
     return res.sendStatus(422).json({
       error: {
@@ -37,13 +47,13 @@ router.post('/newuser', auth.required, (req, res) => {
   let BestWeight = 0;
   if (entry.gender === 'M') {
     BestWeight = 52;
-    for (let index = 0; index < entry.height - 5; index++) {
+    for (let k = 0; k < inchesOver5Feet(parseInt(entry.height)); k++) {
       BestWeight += 1.9;
     }
   }
   if (entry.gender === 'F') {
     BestWeight = 49;
-    for (let index = 0; index < entry.height - 5; index++) {
+    for (let j = 0; j < inchesOver5Feet(parseInt(entry.height)); j++) {
       BestWeight += 1.7;
     }
   }
@@ -54,9 +64,9 @@ router.post('/newuser', auth.required, (req, res) => {
     Gender: entry.gender,
     Height: entry.height,
     Age: entry.age,
-    BMI: Math.ceil(bodyMassIndex),
-    BMR: Math.ceil(BasalMetaRate),
-    IdealWeight: Math.ceil(BestWeight),
+    BMI: Math.round(bodyMassIndex),
+    BMR: Math.round(BasalMetaRate),
+    IdealWeight: Math.round(BestWeight),
   };
 
   const FirstEntry = new Weight(toBeUser);
@@ -104,9 +114,7 @@ router.get('/data', auth.required, (req, res) => {
     },
   } = req;
   if (!user) {
-    res.json({
-      errror: 'no user',
-    });
+    req.send({ error: 'No User' });
   }
   Weight.findOne({
     User: user,
@@ -125,7 +133,7 @@ router.get('/', auth.required, (req, res) => {
     },
   } = req;
   if (!user) {
-    res.json({
+    res.send({
       error: 'no user',
     });
   }
