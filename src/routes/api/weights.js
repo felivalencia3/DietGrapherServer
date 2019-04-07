@@ -113,14 +113,10 @@ router.get('/data', auth.required, (req, res) => {
   if (!user) {
     message = 'Error: No User';
   }
-  Weight.findOne({
-    User: user,
-  }, {}, {
-    sort: {
-      created_at: 1,
-    },
-  }, (err, data) => {
+  const query = Weight.findOne({ User: user }, {}, { sort: { created_at: 1 } }).select('BMI BMR IdealWeight');
+  query.exec((err, data) => {
     let userData = data;
+    if (err) throw err;
     if (message) userData = message;
     res.send(userData);
   });
