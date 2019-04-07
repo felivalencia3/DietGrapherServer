@@ -16,8 +16,9 @@ router.get('/hello', auth.required, (req, res) => {
 });
 
 router.post('/newuser', auth.required, (req, res) => {
+  let message = '';
   const {
-    body: {
+    query: {
       entry,
     },
   } = req;
@@ -28,14 +29,10 @@ router.post('/newuser', auth.required, (req, res) => {
     entry.gender = 'M';
   }
   if (!entry.weight) {
-    return res.sendStatus(422).json({
-      error: {
-        weight: 'is required',
-      },
-    });
+    message = 'Error: No Weight';
   }
   if (!entry.user) {
-    return res.status(422).send('user is required');
+    message = 'Error: No User';
   }
   let BasalMetaRate = 0;
   if (entry.gender === 'M') {
@@ -73,24 +70,23 @@ router.post('/newuser', auth.required, (req, res) => {
 
   return FirstEntry.save()
     .then(() => {
-      res.send(toBeUser);
+      let data = toBeUser;
+      if (message) data = message;
+      res.send(data);
     });
 });
 router.post('/new', auth.required, (req, res) => {
+  let message = '';
   const {
-    body: {
+    query: {
       entry,
     },
   } = req;
   if (!entry.weight) {
-    return res.sendStatus(422).json({
-      error: {
-        weight: 'is required',
-      },
-    });
+    message = 'Error: No Weight';
   }
   if (!entry.user) {
-    return res.status(422).send('user is required');
+    message = 'Error: No User';
   }
   const toBeUser = {
     User: entry.user,
@@ -99,22 +95,23 @@ router.post('/new', auth.required, (req, res) => {
   const Entry = new Weight(toBeUser);
   return Entry.save()
     .then((err) => {
+      let data = { weight: entry.weight };
       if (err) {
         console.error(err);
       }
-      res.status(200).json({
-        weight: entry.weight,
-      });
+      if (message) data = message;
+      res.send(data);
     });
 });
 router.get('/data', auth.required, (req, res) => {
+  let message = '';
   const {
-    body: {
+    query: {
       user,
     },
   } = req;
   if (!user) {
-    req.send({ error: 'No User' });
+    message = 'Error: No User';
   }
   Weight.findOne({
     User: user,
@@ -123,24 +120,29 @@ router.get('/data', auth.required, (req, res) => {
       created_at: 1,
     },
   }, (err, data) => {
-    res.send(data);
+    let userData = data;
+    if (message) userData = message;
+    res.send(userData);
   });
 });
 router.get('/', auth.required, (req, res) => {
+  let message = '';
   const {
-    body: {
+    query: {
       user,
     },
   } = req;
   if (!user) {
-    res.send({
-      error: 'no user',
-    });
+    message = 'Error: No User';
   }
-  Weight.find({
+  const query = Weight.find({
     User: user,
-  }, (err, entry) => {
-    res.send(entry);
+  }).select('Date Weight');
+  query.exec((err, entry) => {
+    let data = entry;
+    if (message) data = message;
+
+    res.send(data);
   });
 });
 module.exports = router;
