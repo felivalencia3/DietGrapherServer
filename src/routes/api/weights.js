@@ -11,7 +11,7 @@ const inchesOver5Feet = (cm) => {
 };
 
 const Weight = mongoose.model('Weights');
-router.get('/hello', auth.required, (req, res) => {
+router.get('/hello', auth.optional, (req, res) => {
   res.send('Hello, World');
 });
 

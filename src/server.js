@@ -11,7 +11,7 @@ const errorHandler = require('errorhandler');
 
 const app = express();
 mongoose.promise = global.Promise;
-process.env.NODE_ENV = 'development';
+process.env.NODE_ENV = 'production';
 app.use(helmet());
 app.use(compression());
 app.use(morgan('dev'));
@@ -38,12 +38,12 @@ app.get('/api/getUsername', (req, res) => res.send({
 app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static(`${__dirname}/dist`));
-mongoose.connect('mongodb://localhost/auth', {
+const uristring = process.env.MONGOLAB_URI
+  || process.env.MONGOHQ_URL
+  || 'mongodb://localhost/auth';
+mongoose.connect(uristring, {
   useNewUrlParser: true,
 });
-if (process.env.NODE_ENV === 'development') {
-  app.use(errorHandler());
-}
 mongoose.set('debug', true);
 require('./models/User');
 require('./models/Weight');
