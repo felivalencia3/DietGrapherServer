@@ -7,7 +7,6 @@ const helmet = require('helmet');
 const compression = require('compression');
 const session = require('express-session');
 const mongoose = require('mongoose');
-const errorHandler = require('errorhandler');
 
 const app = express();
 mongoose.promise = global.Promise;
@@ -31,6 +30,7 @@ app.use(
     extended: false,
   }),
 );
+const deployPort = process.env.PORT || 5000;
 app.use(express.static('public'));
 app.get('/api/getUsername', (req, res) => res.send({
   username: os.userInfo().username,
@@ -38,11 +38,17 @@ app.get('/api/getUsername', (req, res) => res.send({
 app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static(`${__dirname}/dist`));
-const uristring = process.env.MONGOLAB_URI
-  || process.env.MONGOHQ_URL
-  || 'mongodb://localhost/auth';
+const uristring = process.env.MONGODB_URI
+  || 'mongodb://localhost/HelloMongoose';
+
 mongoose.connect(uristring, {
   useNewUrlParser: true,
+}, (err) => {
+  if (err) {
+    console.log(`ERROR connecting to: ${uristring}. ${err}`);
+  } else {
+    console.log(`Succeeded connected to: ${uristring}`);
+  }
 });
 mongoose.set('debug', true);
 require('./models/User');
@@ -50,4 +56,4 @@ require('./models/Weight');
 require('./config/passport');
 app.use(require('./routes'));
 
-app.listen(8081, () => console.log('Server running on http://localhost:8081/'));
+app.listen(deployPort, () => console.log('Server running on http://localhost:8081/'));
