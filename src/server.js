@@ -30,7 +30,7 @@ app.use(
     extended: false,
   }),
 );
-const deployPort = process.env.PORT || 5000;
+const deployPort = process.env.PORT || 8081;
 app.use(express.static('public'));
 app.get('/api/getUsername', (req, res) => res.send({
   username: os.userInfo().username,
@@ -39,7 +39,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static(`${__dirname}/dist`));
 const uristring = process.env.MONGODB_URI
-  || 'mongodb://localhost/HelloMongoose';
+  || 'mongodb://localhost/auth';
 
 mongoose.connect(uristring, {
   useNewUrlParser: true,
@@ -56,4 +56,4 @@ require('./models/Weight');
 require('./config/passport');
 app.use(require('./routes'));
 
-app.listen(deployPort, () => console.log('Server running on http://localhost:8081/'));
+app.listen(deployPort, () => console.log(`Server running on port ${deployPort}`));

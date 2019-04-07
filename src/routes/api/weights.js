@@ -18,7 +18,7 @@ router.get('/hello', auth.optional, (req, res) => {
 router.post('/newuser', auth.required, (req, res) => {
   let message = '';
   const {
-    query: {
+    body: {
       entry,
     },
   } = req;
@@ -78,7 +78,7 @@ router.post('/newuser', auth.required, (req, res) => {
 router.post('/new', auth.required, (req, res) => {
   let message = '';
   const {
-    query: {
+    body: {
       entry,
     },
   } = req;
